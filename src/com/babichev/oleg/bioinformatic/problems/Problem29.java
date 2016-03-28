@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by olegchuikin on 28/03/16.
+ * Created by olegchuikin on 29/03/16.
  */
-public class Problem28 {
+public class Problem29 {
     public static void main(String[] args) {
         File file = new File("data");
 
@@ -24,8 +24,8 @@ public class Problem28 {
             GraphUtils graphUtils = GraphUtils.parseDirectedGraph(lines);
             System.out.println(graphUtils.print());
 
-            System.out.println(graphUtils.findEulerCycle());
-//            System.out.println(graphUtils.printEulerPath());
+//            System.out.println(graphUtils.findEulerPath());
+            System.out.println(graphUtils.printEulerPath());
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -33,6 +33,4 @@ public class Problem28 {
             e.printStackTrace();
         }
     }
-
-
 }

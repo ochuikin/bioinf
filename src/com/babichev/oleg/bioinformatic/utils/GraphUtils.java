@@ -84,39 +84,135 @@ public class GraphUtils {
         return gu;
     }
 
-    public List<String> findEulerPath() {
-        Map<String, List<String>> copy = makeCopy().data;
+    public List<String> findEulerCycle() {
+        String current = (String) data.keySet().toArray()[0];
 
-        List<String> circuit = new ArrayList<>();
-        List<String> stack = new ArrayList<>();
-        String location = new ArrayList<String>(copy.keySet()).get(0);
-        String start = location;
+        List<String> path = new ArrayList<>();
+        path.add(current);
 
-        int edgesCount = 0;
+        GraphUtils gu = makeCopy();
 
-        while (edgesCount != edgesCount()) {
-            List<String> ways = copy.get(location);
-            if (ways.size() != 0) {
-                stack.add(location);
-                location = ways.get(0);
-                ways.remove(0);
+        while (true){
+            path.add(gu.data.get(current).get(0));
+
+            gu.data.get(current).remove(0);
+
+            if (gu.data.containsKey(path.get(path.size() - 1))
+                    && gu.data.get(path.get(path.size() - 1)).size() != 0){
+                current = path.get(path.size() - 1);
             } else {
-                circuit.add(location);
-                location = stack.get(stack.size() - 1);
-                stack.remove(stack.size() - 1);
-                edgesCount++;
+                break;
             }
         }
-        Collections.reverse(circuit);
-        circuit.add(circuit.get(0));
-        return circuit;
+
+        while (gu.edgesCount() > 0){
+            for (int i = 0; i < path.size(); i++){
+                if (gu.data.containsKey(path.get(i))
+                        && gu.data.get(path.get(i)).size() != 0){
+                    current = path.get(i);
+                    List<String> cycle = new ArrayList<>();
+                    cycle.add(current);
+
+                    while (true){
+                        cycle.add(gu.data.get(current).get(0));
+
+                        gu.data.get(current).remove(0);
+
+                        if (gu.data.containsKey(cycle.get(cycle.size()-1))
+                                && gu.data.get(cycle.get(cycle.size()-1)).size() != 0){
+                            current = cycle.get(cycle.size() - 1);
+                        } else {
+                            break;
+                        }
+                    }
+
+                    List<String> tmp = new ArrayList<>();
+                    for (int j = 0; j < i; j++) tmp.add(path.get(j));
+                    tmp.addAll(cycle);
+                    for (int j = i + 1; j < path.size(); j++) tmp.add(path.get(j));
+                    path = tmp;
+                    break;
+                }
+            }
+        }
+
+        return path;
     }
 
-    public String printEulerPath(){
+    public List<String> findEulerPath() {
+        GraphUtils gu = makeCopy();
+
+        List<String> outValues = new ArrayList<>();
+        for (String s : gu.data.keySet()){
+            for (String value : gu.data.get(s)){
+                outValues.add(value);
+            }
+        }
+        Collections.sort(outValues);
+
+        Set<String> distinctValues = new HashSet<>();
+        distinctValues.addAll(outValues);
+        distinctValues.addAll(gu.data.keySet());
+
+        String unbalancedFrom = "";
+        String unbalancedTo = "";
+
+        for (String node : distinctValues){
+            int outValue = countInList(outValues, node);
+            int inValue;
+            if (gu.data.containsKey(node) && gu.data.get(node).size() != 0){
+                inValue = gu.data.get(node).size();
+            } else {
+                inValue = 0;
+            }
+
+            if (inValue < outValue){
+                unbalancedFrom = node;
+            } else if (inValue > outValue) {
+                unbalancedTo = node;
+            }
+        }
+
+        if (gu.data.containsKey(unbalancedFrom)){
+            gu.data.get(unbalancedFrom).add(unbalancedTo);
+        } else {
+            List<String> tmp = new ArrayList<>();
+            tmp.add(unbalancedTo);
+            gu.data.put(unbalancedFrom, tmp);
+        }
+
+        List<String> cycle = gu.findEulerCycle();
+
+        int divide = -1;
+        for (int i = 0; i < cycle.size() - 2; i++){
+            if (cycle.get(i).equals(unbalancedFrom) && cycle.get(i + 1).equals(unbalancedTo)){
+                divide = i;
+                break;
+            }
+        }
+
+
+        List<String> res = new ArrayList<>();
+        for (int i = divide + 1; i < cycle.size(); i++) res.add(cycle.get(i));
+        for (int i = 1; i < divide + 1; i++) res.add(cycle.get(i));
+
+        return res;
+    }
+
+    private int countInList(List<String> list, String s){
+        int i = 0;
+        for (String str : list)
+            if (str.equals(s))
+                i++;
+        return i;
+    }
+
+    public String printEulerPath() {
         StringBuilder sb = new StringBuilder();
-        for (String s : findEulerPath()){
+        for (String s : findEulerPath()) {
             sb.append("->" + s);
         }
+        if (sb.length() == 0) return "";
         return sb.toString().substring(2);
     }
 
