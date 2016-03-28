@@ -1,7 +1,7 @@
 package com.babichev.oleg.bioinformatic.problems;
 
 import com.babichev.oleg.bioinformatic.core.BaseGenome;
-import com.babichev.oleg.bioinformatic.utils.GrapthUtils;
+import com.babichev.oleg.bioinformatic.utils.GraphUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ public class Problem24 {
         }
 //        System.out.println(BaseGenome.reconstructFromGenomPath(list)); //24
 
-        System.out.println(GrapthUtils.constructOverlapGraph(new BaseGenome("AAGATTCTCTAC").getKmerComposition(3)).print());
+        System.out.println(GraphUtils.constructOverlapGraph(new BaseGenome("AAGATTCTCTAC").getKmerComposition(3)).print());
     }
 
 }

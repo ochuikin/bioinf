@@ -1,6 +1,6 @@
 package com.babichev.oleg.bioinformatic.problems;
 
-import com.babichev.oleg.bioinformatic.utils.GrapthUtils;
+import com.babichev.oleg.bioinformatic.utils.GraphUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +14,6 @@ public class Problem25 {
         for (String s : args){
             list.add(s);
         }
-        System.out.println(GrapthUtils.constructOverlapGraph(list).print());
+        System.out.println(GraphUtils.constructOverlapGraph(list).print());
     }
 }
