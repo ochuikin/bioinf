@@ -9,7 +9,7 @@ import java.util.*;
  */
 public class GraphUtils {
 
-    private Map<String, Set<String>> data = new HashMap<>();
+    private Map<String, List<String>> data = new HashMap<>();
 
 
     private GraphUtils() {
@@ -23,7 +23,7 @@ public class GraphUtils {
         Collections.sort(source);
 
         for (String left : source) {
-            Set<String> value = new TreeSet<>();
+            List<String> value = new ArrayList<>();
             for (String right : source) {
                 if (!left.equals(right)) {
                     if (right.startsWith(left.substring(1))) {
@@ -38,18 +38,24 @@ public class GraphUtils {
     }
 
     public static GraphUtils constructDeBruijnGraph(BaseGenome genome, int k){
+        List<String> kmerComposition = genome.getKmerComposition(k);
+
+        return constructDeBruijnGraph(kmerComposition);
+    }
+
+    public static GraphUtils constructDeBruijnGraph(List<String> kmerComposition) {
         GraphUtils gu = new GraphUtils();
 
-        List<String> kmerComposition = genome.getKmerComposition(k);
         for (String s : kmerComposition){
             String left = s.substring(0, s.length() - 1);
             String right = s.substring(1);
             if (!gu.data.containsKey(left)){
-                gu.data.put(left, new HashSet<>());
+                gu.data.put(left, new ArrayList<>());
             }
             gu.data.get(left).add(right);
         }
         return gu;
+
     }
 
     public String print() {
@@ -57,11 +63,14 @@ public class GraphUtils {
         List<String> strs = new ArrayList<>(data.keySet());
         Collections.sort(strs);
         for (String left : strs) {
-            Set<String> rights = data.get(left);
+            List<String> rights = data.get(left);
+            Collections.sort(rights);
+            boolean first = true;
             if (rights.size() != 0) {
                 sb.append(left + " -> ");
                 for (String right : rights) {
-                    sb.append((right.equals(rights.toArray()[0]) ? "" : ",") + right);
+                    sb.append((first ? "" : ",") + right);
+                    first = false;
                 }
                 sb.append("\n");
             }
