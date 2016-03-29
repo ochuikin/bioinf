@@ -1,6 +1,7 @@
 package com.babichev.oleg.bioinformatic.core;
 
 import com.babichev.oleg.bioinformatic.utils.GeneratorUtils;
+import com.babichev.oleg.bioinformatic.utils.GraphUtils;
 import com.babichev.oleg.bioinformatic.utils.HammingDistanceUtil;
 
 import java.util.*;
@@ -180,6 +181,11 @@ public class BaseGenome {
         return new BaseGenome(sb.toString());
     }
 
+    public static BaseGenome reconstructionFromKmers(List<String> kmers){
+        List<String> eulerPath = GraphUtils.constructDeBruijnGraph(kmers).findEulerPath();
+
+        return reconstructFromGenomPath(eulerPath);
+    }
     public String getSymbols() {
         return symbols;
     }
